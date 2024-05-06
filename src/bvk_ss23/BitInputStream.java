@@ -13,6 +13,11 @@ public class BitInputStream {
         this.buffer = 0;
         this.bufferCount = 0;
     }
+    
+    public int getBufferCount()
+    {
+    	return this.bufferCount;
+    }
 
     public int read(int bitNumber) throws IOException {
         if (bitNumber < 0 || bitNumber > 32) {
