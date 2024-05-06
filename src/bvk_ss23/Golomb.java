@@ -1,0 +1,36 @@
+package bvk_ss23;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class Golomb {
+
+	public static void encodeImage(RasterImage image, DataOutputStream out) throws IOException {
+		BitOutputStream stream = new BitOutputStream(out);
+		
+		stream.write(image.width, 16);
+		stream.write(image.height, 16);
+		
+		stream.write(0, 8);
+		stream.write(64, 8);
+		
+	}
+
+	public static RasterImage decodeImage(DataInputStream in) throws IOException {
+		
+		BitInputStream stream = new BitInputStream(in);
+		
+		int width = stream.read(16);
+		int height = stream.read(16);
+	    
+		// Ignore the "mode" parameter, it is to be implemented in the future
+		int mode = stream.read(8);	
+		int M = stream.read(8);
+		
+		// Reconstruct RasterImage
+        RasterImage image = new RasterImage(width, height);
+
+        return image;
+    }
+}
