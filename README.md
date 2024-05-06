@@ -1,0 +1,2 @@
+# Bildkompression
+Image compression class
