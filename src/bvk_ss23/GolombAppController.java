@@ -51,9 +51,6 @@ public class GolombAppController
     private ScrollPane preprocessedScrollPane;
 
     @FXML
-    private Label preprocessedInfoLabel;
-
-    @FXML
     private ImageView golombImageView;
 
     @FXML
@@ -73,6 +70,12 @@ public class GolombAppController
 
     @FXML
     private ComboBox<?> comboBox;
+
+    @FXML
+    private Slider golombSlider;
+
+    @FXML
+    private Label mseInfoLabel;
 
     @FXML
     void openImage()
@@ -106,14 +109,21 @@ public class GolombAppController
         this.zoomLabel.setText(String.format("%.1f", zoomFactorBoxed));
         zoom(this.sourceImageView, this.sourceScrollPane, zoomFactor);
         if (this.preprocessedImageView.getImage() != null)
-        {
             zoom(this.preprocessedImageView, this.preprocessedScrollPane, zoomFactor);
+        if (this.golombImageView.getImage() != null)
             zoom(this.golombImageView, this.golombScrollPane, zoomFactor);
-        }
+
     }
 
     @FXML
-    private void preprocess()
+    void golombChanged()
+    {
+        Double M = Double.valueOf(this.golombSlider.getValue());
+        this.golombInfoLabel.setText(String.format("M = %.0f", M));
+    }
+
+    @FXML
+    void preprocess()
     {
         if (this.comboBox.getValue().equals("Copy"))
         {
@@ -123,7 +133,7 @@ public class GolombAppController
         else if (this.comboBox.getValue().equals("DPCM Horizontal"))
         {
             this.preprocessedImage.setMode(2);
-            this.preprocessedImage = RasterImage.preprocessImage(this.sourceImage);
+            this.preprocessedImage = RasterImage.encodeDPCM(this.sourceImage);
         }
 
         this.preprocessedImage.setToView(this.preprocessedImageView);
@@ -137,12 +147,8 @@ public class GolombAppController
         this.sourceImage = RasterImage.convertToGrayscale(this.sourceImage);
         this.sourceImage.setToView(this.sourceImageView);
         this.sourceInfoLabel.setText("");
-
         if (this.preprocessedImage == null)
             this.preprocessedImage = this.sourceImage;
-
-        this.golombImage = RasterImage.processGolombImage(this.preprocessedImage);
-        this.golombImage.setToView(this.golombImageView);
         compareImages();
     }
 
@@ -150,11 +156,11 @@ public class GolombAppController
     {
         if (this.sourceImage.argb.length != this.preprocessedImage.argb.length || this.preprocessedImageFileSize == 0)
         {
-            this.preprocessedInfoLabel.setText("");
+            this.mseInfoLabel.setText("");
             return;
         }
         Double mse = Double.valueOf(this.preprocessedImage.getMSEfromComparisonTo(this.sourceImage));
-        this.preprocessedInfoLabel.setText(String.format("MSE = %.1f", mse));
+        this.mseInfoLabel.setText(String.format("MSE = %.1f", mse));
     }
 
     @SuppressWarnings("resource")
@@ -171,6 +177,7 @@ public class GolombAppController
             {
                 DataOutputStream ouputStream = new DataOutputStream(new FileOutputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
+                this.sourceImage.M = this.golombSlider.getValue();
                 Golomb.encodeImage(this.sourceImage, ouputStream);
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Encoding in " + time + " ms");
@@ -196,10 +203,10 @@ public class GolombAppController
             {
                 DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
-                this.preprocessedImage = Golomb.decodeImage(inputStream);
+                this.golombImage = Golomb.decodeImage(inputStream);
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Decoding in " + time + " ms");
-                this.preprocessedImage.setToView(this.preprocessedImageView);
+                this.golombImage.setToView(this.golombImageView);
                 compareImages();
             }
             catch (Exception e)

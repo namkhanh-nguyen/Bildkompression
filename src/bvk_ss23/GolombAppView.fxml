@@ -17,14 +17,20 @@
 
 <BorderPane maxHeight="580.0" maxWidth="835.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bvk_ss23.GolombAppController">
   <top>
-      <ComboBox fx:id="comboBox" onAction="#preprocess" BorderPane.alignment="TOP_LEFT" promptText="Choose">
-       <items>
-            <FXCollections fx:factory="observableArrayList">
-                <String fx:value="Copy"/>
-                <String fx:value="DPCM Horizontal"/>
-            </FXCollections>
-        </items>
-      </ComboBox>
+    <HBox alignment="CENTER" spacing="30.0">
+      <children>
+           <ComboBox fx:id="comboBox" onAction="#preprocess" BorderPane.alignment="TOP_LEFT" promptText="Choose">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Copy"/>
+                    <String fx:value="DPCM Horizontal"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Slider fx:id="golombSlider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
+        <Label fx:id="golombInfoLabel" text="Info Label" />
+      </children>
+     </HBox>
   </top>
   <center>
       <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">
@@ -78,7 +84,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="preprocessedInfoLabel" text="Golomb Processing" />
+                  <Label fx:id="mseInfoLabel" text="Load Golomb image to calculate MSE" />
                   <HBox alignment="CENTER_RIGHT" spacing="8.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Preprocessed" />
@@ -92,7 +98,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="preprocessedInfoLabel" text="Info Label" />
+                  <Label fx:id="mseInfoLabel" text="Info Label" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                      </children>

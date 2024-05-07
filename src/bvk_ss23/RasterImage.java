@@ -24,12 +24,14 @@ public class RasterImage
     public int width; // image width in pixels
     public int height; // image height in pixels
     public String mode;
+    public double M;
 
     public RasterImage(int width, int height)
     {
         // creates an empty RasterImage of given size
         this.width = width;
         this.height = height;
+        // The default mode is always copy to return the same image if no other function is implemented
         this.mode = "Copy";
         this.argb = new int[width * height];
         Arrays.fill(this.argb, gray);
@@ -82,7 +84,6 @@ public class RasterImage
         }
     }
 
-    // image operations
     public static RasterImage convertToGrayscale(RasterImage image)
     {
 
@@ -91,15 +92,12 @@ public class RasterImage
         for (int i = 0; i < image.argb.length; i++)
         {
             int alpha = image.argb[i] >> 24 & 0xFF;
-
-            // Calculate grayscale value using RGB
             int red = image.argb[i] >> 16 & 0xFF;
             int green = image.argb[i] >> 8 & 0xFF;
             int blue = image.argb[i] & 0xFF;
 
             int gray = (red + green + blue) / 3;
 
-            // Create new color with grayscale
             grayscale[i] = alpha << 24 | gray << 16 | gray << 8 | gray;
         }
         image.argb = grayscale;
@@ -115,13 +113,15 @@ public class RasterImage
         double sum = 0.0;
         for (int i = 0; i < this.argb.length; i++)
         {
-            // Calculate squared differences for each pixel component (ARGB)
+            /**
+             * Calculate difference for each pixel component (ARGB)
+             */
             int diffA = (this.argb[i] >> 24 & 0xFF) - (image.argb[i] >> 24 & 0xFF);
             int diffR = (this.argb[i] >> 16 & 0xFF) - (image.argb[i] >> 16 & 0xFF);
             int diffG = (this.argb[i] >> 8 & 0xFF) - (image.argb[i] >> 8 & 0xFF);
             int diffB = (this.argb[i] & 0xFF) - (image.argb[i] & 0xFF);
 
-            // Accumulate squared differences
+            /** Accummulate squared differences */
             sum += diffA * diffA + diffR * diffR + diffG * diffG + diffB * diffB;
         }
 
@@ -139,10 +139,17 @@ public class RasterImage
             System.out.println("Mode must either be 0 (Copy) or 2 (DPCM Horizontal)");
     }
 
-    public static RasterImage preprocessImage(RasterImage image)
+    public int getMode()
+    {
+        if (this.mode.equals("DPCM Horizontal"))
+            return 2;
+        else
+            return 0;
+    }
+
+    public static RasterImage encodeDPCM(RasterImage image)
     {
         RasterImage newImage = new RasterImage(image.width, image.height);
-        int[] newARGB = new int[image.argb.length];
         int prevPixel = 0;
         for (int currentPixel = 1; currentPixel < image.argb.length; currentPixel++)
         {
@@ -150,15 +157,8 @@ public class RasterImage
             int diffG = 128 + (image.argb[currentPixel] >> 8 & 0xFF) - (image.argb[prevPixel] >> 8 & 0xFF);
             int diffB = 128 + (image.argb[currentPixel] & 0xFF) - (image.argb[prevPixel] & 0xFF);
 
-            newARGB[prevPixel++] = 0xFF << 24 | diffR << 16 | diffG << 8 | diffB;
+            newImage.argb[prevPixel++] = 0xFF << 24 | diffR << 16 | diffG << 8 | diffB;
         }
-        newImage.argb = newARGB;
         return newImage;
     }
-
-    public static RasterImage processGolombImage(RasterImage image)
-    {
-        return image;
-    }
-
 }
