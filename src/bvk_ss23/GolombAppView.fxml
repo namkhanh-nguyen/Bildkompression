@@ -17,7 +17,7 @@
 
 <BorderPane maxHeight="580.0" maxWidth="835.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bvk_ss23.GolombAppController">
   <top>
-      <ComboBox fx:id="comboBox" onAction="#setPreprocessMode" BorderPane.alignment="TOP_LEFT" promptText="Choose">
+      <ComboBox fx:id="comboBox" onAction="#preprocess" BorderPane.alignment="TOP_LEFT" promptText="Choose">
        <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="Copy"/>
@@ -79,7 +79,7 @@
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
                   <Label fx:id="preprocessedInfoLabel" text="Golomb Processing" />
-                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Preprocessed" />
                         <Button mnemonicParsing="false" onAction="#saveGolombImage" text="Save Golomb Image" />

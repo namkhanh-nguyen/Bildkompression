@@ -72,7 +72,7 @@ public class GolombAppController
     private Label zoomLabel;
 
     @FXML
-    private ComboBox comboBox;
+    private ComboBox<?> comboBox;
 
     @FXML
     void openImage()
@@ -105,21 +105,25 @@ public class GolombAppController
         Double zoomFactorBoxed = Double.valueOf(zoomFactor);
         this.zoomLabel.setText(String.format("%.1f", zoomFactorBoxed));
         zoom(this.sourceImageView, this.sourceScrollPane, zoomFactor);
-        zoom(this.preprocessedImageView, this.preprocessedScrollPane, zoomFactor);
+        if (this.preprocessedImageView.getImage() != null)
+        {
+            zoom(this.preprocessedImageView, this.preprocessedScrollPane, zoomFactor);
+            zoom(this.golombImageView, this.golombScrollPane, zoomFactor);
+        }
     }
 
     @FXML
-    private void setPreprocessMode()
+    private void preprocess()
     {
-        if (this.comboBox.getValue() == null || this.comboBox.getValue().equals("Copy"))
+        if (this.comboBox.getValue().equals("Copy"))
         {
-            this.preprocessedImage.setMode("Copy");
-            this.preprocessedImage = preprocessImage(this.sourceImage);
+            this.preprocessedImage.setMode(0);
+            this.preprocessedImage = this.sourceImage;
         }
         else if (this.comboBox.getValue().equals("DPCM Horizontal"))
         {
-            this.preprocessedImage.setMode("DPCM Horizontal");
-            this.preprocessedImage = preprocessImage(this.sourceImage);
+            this.preprocessedImage.setMode(2);
+            this.preprocessedImage = RasterImage.preprocessImage(this.sourceImage);
         }
 
         this.preprocessedImage.setToView(this.preprocessedImageView);
@@ -130,7 +134,7 @@ public class GolombAppController
         this.sourceFileName = file.getName();
         this.messageLabel.setText("Opened image " + this.sourceFileName);
         this.sourceImage = new RasterImage(file);
-        this.sourceImage.argb = RasterImage.convertToGrayscale(this.sourceImage.argb);
+        this.sourceImage = RasterImage.convertToGrayscale(this.sourceImage);
         this.sourceImage.setToView(this.sourceImageView);
         this.sourceInfoLabel.setText("");
 
@@ -140,17 +144,6 @@ public class GolombAppController
         this.golombImage = RasterImage.processGolombImage(this.preprocessedImage);
         this.golombImage.setToView(this.golombImageView);
         compareImages();
-    }
-
-    public RasterImage preprocessImage(RasterImage image)
-    {
-        if (image.mode.equals("DPCM Horizontal"))
-        {
-            System.out.println("DPCM");
-            return image;
-        }
-        else
-            return image;
     }
 
     private void compareImages()

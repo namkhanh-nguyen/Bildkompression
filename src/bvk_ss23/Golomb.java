@@ -42,10 +42,7 @@ public class Golomb
         // Reconstruct RasterImage
         RasterImage image = new RasterImage(width, height);
 
-        if (mode == 0)
-            image.setMode("Copy");
-        else if (mode == 2)
-            image.setMode("DPCM Horizontal");
+        image.setMode(mode);
 
         return image;
     }

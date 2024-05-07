@@ -83,24 +83,27 @@ public class RasterImage
     }
 
     // image operations
-    public static int[] convertToGrayscale(int[] argb)
+    public static RasterImage convertToGrayscale(RasterImage image)
     {
-        int[] grayscale = new int[argb.length];
 
-        for (int i = 0; i < argb.length; i++)
+        int[] grayscale = new int[image.argb.length];
+
+        for (int i = 0; i < image.argb.length; i++)
         {
-            int alpha = argb[i] >> 24 & 0xFF;
+            int alpha = image.argb[i] >> 24 & 0xFF;
 
             // Calculate grayscale value using RGB
-            int red = argb[i] >> 16 & 0xFF;
-            int green = argb[i] >> 8 & 0xFF;
-            int blue = argb[i] & 0xFF;
+            int red = image.argb[i] >> 16 & 0xFF;
+            int green = image.argb[i] >> 8 & 0xFF;
+            int blue = image.argb[i] & 0xFF;
+
             int gray = (red + green + blue) / 3;
 
             // Create new color with grayscale
             grayscale[i] = alpha << 24 | gray << 16 | gray << 8 | gray;
         }
-        return grayscale;
+        image.argb = grayscale;
+        return image;
     }
 
     public double getMSEfromComparisonTo(RasterImage image)
@@ -126,12 +129,31 @@ public class RasterImage
         return meanSquaredError;
     }
 
-    public void setMode(String mode)
+    public void setMode(int mode)
     {
-        if (mode.equalsIgnoreCase("Copy") || mode.equalsIgnoreCase("DPCM Horizontal"))
-            this.mode = mode;
+        if (mode == 0)
+            this.mode = "Copy";
+        else if (mode == 2)
+            this.mode = "DPCM Horizontal";
         else
-            System.out.println("Mode must be either Copy or DPCM Horizontal");
+            System.out.println("Mode must either be 0 (Copy) or 2 (DPCM Horizontal)");
+    }
+
+    public static RasterImage preprocessImage(RasterImage image)
+    {
+        RasterImage newImage = new RasterImage(image.width, image.height);
+        int[] newARGB = new int[image.argb.length];
+        int prevPixel = 0;
+        for (int currentPixel = 1; currentPixel < image.argb.length; currentPixel++)
+        {
+            int diffR = 128 + (image.argb[currentPixel] >> 16 & 0xFF) - (image.argb[prevPixel] >> 16 & 0xFF);
+            int diffG = 128 + (image.argb[currentPixel] >> 8 & 0xFF) - (image.argb[prevPixel] >> 8 & 0xFF);
+            int diffB = 128 + (image.argb[currentPixel] & 0xFF) - (image.argb[prevPixel] & 0xFF);
+
+            newARGB[prevPixel++] = 0xFF << 24 | diffR << 16 | diffG << 8 | diffB;
+        }
+        newImage.argb = newARGB;
+        return newImage;
     }
 
     public static RasterImage processGolombImage(RasterImage image)

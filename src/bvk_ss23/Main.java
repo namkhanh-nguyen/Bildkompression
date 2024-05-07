@@ -28,7 +28,7 @@ public class Main extends Application
         BorderPane root = (BorderPane) loadFXML("GolombAppView.fxml");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Golomb Application - SS2024 - Nam + Leah"); // TODO: add your name(s)
+        primaryStage.setTitle("Image Compression Application - SS2024 - Nam + Leah"); // TODO: add your name(s)
         primaryStage.show();
     }
 
