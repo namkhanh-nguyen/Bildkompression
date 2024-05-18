@@ -137,10 +137,13 @@ public class RasterImage
 
     public int getMode()
     {
-        if (this.mode.equals("DPCM Horizontal"))
-            return 2;
-        else
-            return 0;
+    	if(this.mode != null)
+    		if (this.mode.equals("DPCM Horizontal"))
+    			return 2;
+    		else
+    			return 0;
+    	else
+    		return 0;
     }
 
     public static RasterImage encodeDPCM(RasterImage image)
