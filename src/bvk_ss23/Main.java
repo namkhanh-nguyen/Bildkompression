@@ -37,7 +37,6 @@ public class Main extends Application
         launch(args);
     }
 
-    @SuppressWarnings("resource")
     private Object loadFXML(String resourceName)
         throws Exception
     {

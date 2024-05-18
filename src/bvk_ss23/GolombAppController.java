@@ -163,7 +163,6 @@ public class GolombAppController
         this.mseInfoLabel.setText(String.format("MSE = %.1f", mse));
     }
 
-    @SuppressWarnings("resource")
     @FXML
     public void saveGolombImage()
     {
@@ -188,7 +187,6 @@ public class GolombAppController
             }
     }
 
-    @SuppressWarnings("resource")
     @FXML
     public void openGolombImage()
     {

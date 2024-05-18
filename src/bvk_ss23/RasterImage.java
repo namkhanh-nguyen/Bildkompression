@@ -86,9 +86,6 @@ public class RasterImage
 
     public static RasterImage convertToGrayscale(RasterImage image)
     {
-
-        int[] grayscale = new int[image.argb.length];
-
         for (int i = 0; i < image.argb.length; i++)
         {
             int alpha = image.argb[i] >> 24 & 0xFF;
@@ -97,10 +94,9 @@ public class RasterImage
             int blue = image.argb[i] & 0xFF;
 
             int gray = (red + green + blue) / 3;
-
-            grayscale[i] = alpha << 24 | gray << 16 | gray << 8 | gray;
+            
+            image.argb[i] = alpha << 24 | gray << 16 | gray << 8 | gray;
         }
-        image.argb = grayscale;
         return image;
     }
 
@@ -150,6 +146,9 @@ public class RasterImage
     public static RasterImage encodeDPCM(RasterImage image)
     {
         RasterImage newImage = new RasterImage(image.width, image.height);
+        
+        newImage.argb[0] = 0xFF << 24 | 128 << 16 | 128 << 8 | 128;
+        
         int prevPixel = 0;
         for (int currentPixel = 1; currentPixel < image.argb.length; currentPixel++)
         {
