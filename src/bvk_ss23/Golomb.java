@@ -76,13 +76,15 @@ public class Golomb
 
             int gray = 0;
 
-            if (mode == 2 && i > 0) // DPCM horizontal mode
+            if (mode == 2 && i > 0)
             {
+                // DPCM horizontal mode
                 gray = 128 + value & 0xff;
                 image.argb[i - 1] = 0xFF << 24 | gray << 16 | gray << 8 | gray;
             }
             else
-            { // Copy mode
+            {
+                // Copy mode
                 gray = value & 0xff;
                 image.argb[i] = 0xFF << 24 | gray << 16 | gray << 8 | gray;
             }

@@ -94,7 +94,7 @@ public class RasterImage
             int blue = image.argb[i] & 0xFF;
 
             int gray = (red + green + blue) / 3;
-            
+
             image.argb[i] = alpha << 24 | gray << 16 | gray << 8 | gray;
         }
         return image;
@@ -137,21 +137,21 @@ public class RasterImage
 
     public int getMode()
     {
-    	if(this.mode != null)
-    		if (this.mode.equals("DPCM Horizontal"))
-    			return 2;
-    		else
-    			return 0;
-    	else
-    		return 0;
+        if (this.mode != null)
+            if (this.mode.equals("DPCM Horizontal"))
+                return 2;
+            else
+                return 0;
+        else
+            return 0;
     }
 
     public static RasterImage encodeDPCM(RasterImage image)
     {
         RasterImage newImage = new RasterImage(image.width, image.height);
-        
+
         newImage.argb[0] = 0xFF << 24 | 128 << 16 | 128 << 8 | 128;
-        
+
         int prevPixel = 0;
         for (int currentPixel = 1; currentPixel < image.argb.length; currentPixel++)
         {

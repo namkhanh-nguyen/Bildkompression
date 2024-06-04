@@ -174,10 +174,11 @@ public class GolombAppController
         if (selectedFile != null)
             try
             {
-                DataOutputStream ouputStream = new DataOutputStream(new FileOutputStream(selectedFile));
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
                 this.sourceImage.M = this.golombSlider.getValue();
-                Golomb.encodeImage(this.sourceImage, ouputStream);
+                Golomb.encodeImage(this.sourceImage, outputStream);
+                outputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Encoding in " + time + " ms");
             }
@@ -202,6 +203,7 @@ public class GolombAppController
                 DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
                 this.golombImage = Golomb.decodeImage(inputStream);
+                inputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Decoding in " + time + " ms");
                 this.golombImage.setToView(this.golombImageView);
