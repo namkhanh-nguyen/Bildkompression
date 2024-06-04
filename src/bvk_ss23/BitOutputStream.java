@@ -1,43 +1,56 @@
+
 package bvk_ss23;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class BitOutputStream {
-    private OutputStream outputStream;
-    private int buffer;
-    private int bufferCount;
+public class BitOutputStream implements AutoCloseable
+{
 
-    public BitOutputStream(OutputStream outputStream) {
-        this.outputStream = outputStream;
-        this.buffer = 0;
-        this.bufferCount = 0;
+    private OutputStream output;
+    private int currentByte;
+    private int numBitsInCurrentByte;
+
+    public BitOutputStream(OutputStream output)
+    {
+        this.output = output;
+        this.currentByte = 0;
+        this.numBitsInCurrentByte = 0;
     }
 
-    public void write(int value, int bitNumber) throws IOException {
-        if (bitNumber < 0 || bitNumber > 32) {
-            throw new IllegalArgumentException("Bit number must be between 0 and 32");
-        }
+    public void write(int value, int bitNumber)
+        throws IOException
+    {
+        if (bitNumber < 0 || bitNumber > 32)
+            throw new IllegalArgumentException("bitNumber out of range");
 
-        int mask = (1 << bitNumber) - 1;
-        value &= mask; // Keep only the specified number of least significant bits
-
-        buffer |= (value << bufferCount);
-        bufferCount += bitNumber;
-
-        while (bufferCount >= 8) {
-            outputStream.write(buffer & 0xFF); // Write the least significant byte
-            buffer >>= 8; // Shift out the written byte
-            bufferCount -= 8;
+        for (int i = 0; i < bitNumber; i++)
+        {
+            int bit = value >> bitNumber - i - 1 & 1;
+            this.currentByte = this.currentByte << 1 | bit;
+            this.numBitsInCurrentByte++;
+            if (this.numBitsInCurrentByte == 8)
+                flush();
         }
     }
 
-    public void close() throws IOException {
-        if (bufferCount > 0) {
-            // Fill the buffer with zeros if less than 8 bits are remaining
-            buffer <<= (8 - bufferCount);
-            outputStream.write(buffer & 0xFF);
+    private void flush()
+        throws IOException
+    {
+        if (this.numBitsInCurrentByte > 0)
+        {
+            this.currentByte = this.currentByte << 8 - this.numBitsInCurrentByte;
+            this.output.write(this.currentByte);
+            this.numBitsInCurrentByte = 0;
+            this.currentByte = 0;
         }
-        outputStream.close();
+    }
+
+    @Override
+    public void close()
+        throws IOException
+    {
+        flush();
+        this.output.close();
     }
 }
