@@ -17,7 +17,7 @@ public class Golomb
         stream.write(image.height, 16);
 
         int mode = image.getMode();
-        int M = (int) image.M;
+        int M = image.M < 1 ? 1 : (int) image.M;
 
         stream.write(mode, 8);
         stream.write(M, 8);
@@ -65,6 +65,8 @@ public class Golomb
                 quotient++; // Read unary part
 
             // Read truncated binary part
+            if(b < 1)
+            	b = 1;
             int remainder = stream.read(b - 1);
 
             if (remainder >= cutoff)
