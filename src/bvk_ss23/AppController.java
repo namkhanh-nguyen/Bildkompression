@@ -21,7 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 
-public class GolombAppController
+public class AppController
 {
 
     private static final String initialFileName = "ara_klein.png";
@@ -33,7 +33,7 @@ public class GolombAppController
     private RasterImage preprocessedImage;
     private long preprocessedImageFileSize;
 
-    private RasterImage golombImage;
+    private RasterImage rasterImage;
 
     @FXML
     private ImageView sourceImageView;
@@ -51,13 +51,13 @@ public class GolombAppController
     private ScrollPane preprocessedScrollPane;
 
     @FXML
-    private ImageView golombImageView;
+    private ImageView decodedImageView;
 
     @FXML
-    private ScrollPane golombScrollPane;
+    private ScrollPane decodedScrollPane;
 
     @FXML
-    private Label golombInfoLabel;
+    private Label decodedInfoLabel;
 
     @FXML
     private Label messageLabel;
@@ -72,7 +72,7 @@ public class GolombAppController
     private ComboBox<?> comboBox;
 
     @FXML
-    private Slider golombSlider;
+    private Slider slider;
 
     @FXML
     private Label mseInfoLabel;
@@ -110,16 +110,16 @@ public class GolombAppController
         zoom(this.sourceImageView, this.sourceScrollPane, zoomFactor);
         if (this.preprocessedImageView.getImage() != null)
             zoom(this.preprocessedImageView, this.preprocessedScrollPane, zoomFactor);
-        if (this.golombImageView.getImage() != null)
-            zoom(this.golombImageView, this.golombScrollPane, zoomFactor);
+        if (this.decodedImageView.getImage() != null)
+            zoom(this.decodedImageView, this.decodedScrollPane, zoomFactor);
 
     }
 
     @FXML
     void golombChanged()
     {
-        Double M = Double.valueOf(this.golombSlider.getValue());
-        this.golombInfoLabel.setText(String.format("M = %.0f", M));
+        Double M = Double.valueOf(this.slider.getValue());
+        this.decodedInfoLabel.setText(String.format("M = %.0f", M));
     }
 
     @FXML
@@ -176,7 +176,7 @@ public class GolombAppController
             {
                 DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
-                this.sourceImage.M = this.golombSlider.getValue();
+                this.sourceImage.M = this.slider == null ? 0 : this.slider.getValue();
                 Golomb.encodeImage(this.sourceImage, outputStream);
                 outputStream.close();
                 long time = System.currentTimeMillis() - startTime;
@@ -202,11 +202,11 @@ public class GolombAppController
             {
                 DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
-                this.golombImage = Golomb.decodeImage(inputStream);
+                this.rasterImage = Golomb.decodeImage(inputStream);
                 inputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Decoding in " + time + " ms");
-                this.golombImage.setToView(this.golombImageView);
+                this.rasterImage.setToView(this.decodedImageView);
                 compareImages();
             }
             catch (Exception e)

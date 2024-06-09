@@ -57,6 +57,8 @@ public class Golomb
         // Calculate M-parameter for Golomb decoding
         int b = (int) Math.ceil(Math.log(M) / Math.log(2)); // b = ceil(log2(M))
         int cutoff = (1 << b) - M; // n = 2^b - M
+        
+        int prevPixel = 128;
 
         for (int i = 0; i < width * height; i++)
         {
@@ -76,19 +78,19 @@ public class Golomb
             }
             int value = quotient * M + remainder;
 
-            int gray = 0;
-
-            if (mode == 2 && i > 0)
+            if (mode == 2)
             {
                 // DPCM horizontal mode
-                gray = 128 + value & 0xff;
-                image.argb[i - 1] = 0xFF << 24 | gray << 16 | gray << 8 | gray;
+                int difference = value % 2 == 0 ? value / 2 : -(value/2 + 1);
+                int currentPixel = prevPixel + difference;
+                prevPixel = currentPixel;
+                image.argb[i] = 0xFF << 24 | currentPixel << 16 | currentPixel << 8 | currentPixel;
             }
             else
             {
                 // Copy mode
-                gray = value & 0xff;
-                image.argb[i] = 0xFF << 24 | gray << 16 | gray << 8 | gray;
+                int colour = value & 0xff;
+                image.argb[i] = 0xFF << 24 | colour << 16 | colour << 8 | colour;
             }
         }
         stream.close();
