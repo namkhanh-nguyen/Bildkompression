@@ -25,7 +25,7 @@ public class Main extends Application
     public void start(Stage primaryStage)
         throws Exception
     {
-        BorderPane root = (BorderPane) loadFXML("GolombAppView.fxml");
+        BorderPane root = (BorderPane) loadFXML("ArithmeticAppView.fxml");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Image Compression Application - SS2024 - Nam + Leah"); // TODO: add your name(s)

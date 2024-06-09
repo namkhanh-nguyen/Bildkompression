@@ -176,7 +176,7 @@ public class AppController
             {
                 DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
-                this.sourceImage.M = this.slider == null ? 0 : this.slider.getValue();
+                this.sourceImage.M = this.slider.getValue();
                 Golomb.encodeImage(this.sourceImage, outputStream);
                 outputStream.close();
                 long time = System.currentTimeMillis() - startTime;

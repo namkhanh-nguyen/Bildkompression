@@ -27,7 +27,7 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <Slider fx:id="decodedSlider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
+        <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
         <Label fx:id="decodedInfoLabel" text="Info Label" />
       </children>
      </HBox>
