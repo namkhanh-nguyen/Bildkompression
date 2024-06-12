@@ -189,6 +189,31 @@ public class AppController
     }
 
     @FXML
+    public void saveArithemticCodedImage()
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(fileOpenPath);
+        fileChooser.setInitialFileName(this.sourceFileName.substring(0, this.sourceFileName.lastIndexOf('.')) + ".ari");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Arithmetic Images (*.ari)", "*.ari"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+        if (selectedFile != null)
+            try
+            {
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
+                long startTime = System.currentTimeMillis();
+                this.sourceImage.M = this.slider.getValue();
+                Arithmetic.encodeImage(this.sourceImage, outputStream);
+                outputStream.close();
+                long time = System.currentTimeMillis() - startTime;
+                this.messageLabel.setText("Encoding in " + time + " ms");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+    }
+
+    @FXML
     public void openGolombImage()
     {
         FileChooser fileChooser = new FileChooser();
@@ -203,6 +228,34 @@ public class AppController
                 DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
                 this.rasterImage = Golomb.decodeImage(inputStream);
+                inputStream.close();
+                long time = System.currentTimeMillis() - startTime;
+                this.messageLabel.setText("Decoding in " + time + " ms");
+                this.rasterImage.setToView(this.decodedImageView);
+                compareImages();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    public void openArithmeticCodedImage()
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(fileOpenPath);
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Arithmetic Images (*.ari)", "*.ari"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null)
+        {
+            this.preprocessedImageFileSize = selectedFile.length();
+            try
+            {
+                DataInputStream inputStream = new DataInputStream(new FileInputStream(selectedFile));
+                long startTime = System.currentTimeMillis();
+                this.rasterImage = Arithmetic.decodeImage(inputStream);
                 inputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Decoding in " + time + " ms");
