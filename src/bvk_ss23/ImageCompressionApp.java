@@ -25,7 +25,7 @@ public class ImageCompressionApp extends Application
     public void start(Stage primaryStage)
         throws Exception
     {
-        BorderPane root = (BorderPane) loadFXML("ArithmeticAppView.fxml");
+        BorderPane root = (BorderPane) loadFXML("PredictionAppView.fxml");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Image Compression Application - SS2024 - Nam + Leah"); // TODO: add your name(s)
