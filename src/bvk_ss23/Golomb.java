@@ -22,9 +22,23 @@ public class Golomb
         stream.write(mode, 8);
         stream.write(M, 8);
 
+        int prevPixel = 128;
+
         for (int i = 0; i < image.argb.length; i++)
         {
-            int value = image.argb[i] & 0xff;
+            int value;
+            if (mode == 2)
+            {
+                int currentPixel = image.argb[i] & 0xFF;
+                int difference = currentPixel - prevPixel;
+                value = difference >= 0 ? 2 * difference : -2 * difference - 1;
+                prevPixel = currentPixel;
+            }
+            else
+            {
+                value = image.argb[i] & 0xFF;
+            }
+
             int quotient = value / M;
             int remainder = value % M;
             for (int j = 0; j < quotient; j++)
@@ -49,6 +63,8 @@ public class Golomb
         int height = stream.read(16);
         int mode = stream.read(8);
         int M = stream.read(8);
+        if (M < 1)
+            M = 1;
 
         // Reconstruct RasterImage
         RasterImage image = new RasterImage(width, height);
@@ -67,22 +83,35 @@ public class Golomb
                 quotient++; // Read unary part
 
             // Read truncated binary part
-            if(b < 1)
-            	b = 1;
-            int remainder = stream.read(b - 1);
-
-            if (remainder >= cutoff)
+            int remainder;
+            if (M == 1)
             {
-                remainder = remainder << 1 | stream.read(1);
-                remainder -= cutoff;
+                remainder = 0;
+            }
+            else
+            {
+                int valueOrPrefix = stream.read(b - 1);
+                if (valueOrPrefix < cutoff)
+                {
+                    remainder = valueOrPrefix;
+                }
+                else
+                {
+                    remainder = (valueOrPrefix << 1) | stream.read(1);
+                    remainder -= cutoff;
+                }
             }
             int value = quotient * M + remainder;
 
             if (mode == 2)
             {
                 // DPCM horizontal mode
-                int difference = value % 2 == 0 ? value / 2 : -(value/2 + 1);
+                int difference = value % 2 == 0 ? value / 2 : -(value / 2 + 1);
                 int currentPixel = prevPixel + difference;
+                if (currentPixel < 0)
+                    currentPixel = 0;
+                if (currentPixel > 255)
+                    currentPixel = 255;
                 prevPixel = currentPixel;
                 image.argb[i] = 0xFF << 24 | currentPixel << 16 | currentPixel << 8 | currentPixel;
             }

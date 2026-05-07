@@ -28,16 +28,10 @@ public class ImageCompressionApp extends Application
         BorderPane root = (BorderPane) loadFXML("PredictionAppView.fxml");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Image Compression Application - SS2024 - Nam + Leah"); // TODO: add your name(s)
+        primaryStage.setTitle("Image Compression Application - SS2026 - Nam"); // TODO: add your name(s)
         primaryStage.show();
     }
 
-    public static void main(String[] args)
-    {
-        launch(args);
-    }
-
-    @SuppressWarnings("resource")
     private Object loadFXML(String resourceName)
         throws Exception
     {

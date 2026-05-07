@@ -28,7 +28,7 @@
             </items>
         </ComboBox>
         <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
-        <Label fx:id="decodedInfoLabel" text="Info Label" />
+        <Label fx:id="decodedInfoLabel" text="M = 0" />
       </children>
      </HBox>
   </top>
@@ -73,7 +73,7 @@
             </TitledPane>
             <VBox spacing="5.0" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="sourceInfoLabel" text="Info Label" />
+                  <Label fx:id="sourceInfoLabel" text="M = 0" />
                   <HBox spacing="10.0" VBox.vgrow="NEVER">
                      <children>
                         <Button mnemonicParsing="false" onAction="#openImage" prefHeight="27.0" text="Open Image" />
@@ -98,7 +98,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="mseInfoLabel" text="Info Label" />
+                  <Label fx:id="mseInfoLabel" text="M = 0" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                      </children>

@@ -118,7 +118,7 @@ public class AppController
     @FXML
     void golombChanged()
     {
-        Double M = Double.valueOf(this.slider.getValue());
+        Double M = this.slider.getValue();
         this.decodedInfoLabel.setText(String.format("M = %.0f", M));
     }
 
@@ -127,13 +127,15 @@ public class AppController
     {
         if (this.comboBox.getValue().equals("Copy"))
         {
-            this.preprocessedImage.setMode(0);
-            this.preprocessedImage = this.sourceImage;
+            RasterImage copy = new RasterImage(this.sourceImage.width, this.sourceImage.height);
+            System.arraycopy(this.sourceImage.argb, 0, copy.argb, 0, this.sourceImage.argb.length);
+            copy.setMode(0);
+            this.preprocessedImage = copy;
         }
         else if (this.comboBox.getValue().equals("DPCM Horizontal"))
         {
-            this.preprocessedImage.setMode(2);
             this.preprocessedImage = RasterImage.encodeDPCM(this.sourceImage);
+            this.preprocessedImage.setMode(2);
         }
 
         this.preprocessedImage.setToView(this.preprocessedImageView);
@@ -147,8 +149,9 @@ public class AppController
         this.sourceImage = RasterImage.convertToGrayscale(this.sourceImage);
         this.sourceImage.setToView(this.sourceImageView);
         this.sourceInfoLabel.setText("");
-        if (this.preprocessedImage == null)
-            this.preprocessedImage = this.sourceImage;
+        this.preprocessedImage = new RasterImage(this.sourceImage.width, this.sourceImage.height);
+        System.arraycopy(this.sourceImage.argb, 0, this.preprocessedImage.argb, 0, this.sourceImage.argb.length);
+        this.preprocessedImage.setMode(0);
         compareImages();
     }
 
@@ -176,8 +179,14 @@ public class AppController
             {
                 DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(selectedFile));
                 long startTime = System.currentTimeMillis();
-                this.sourceImage.M = this.slider.getValue();
-                Golomb.encodeImage(this.sourceImage, outputStream);
+                RasterImage imageToEncode = new RasterImage(this.sourceImage.width, this.sourceImage.height);
+                System.arraycopy(this.sourceImage.argb, 0, imageToEncode.argb, 0, this.sourceImage.argb.length);
+                if (this.preprocessedImage != null)
+                    imageToEncode.setMode(this.preprocessedImage.getMode());
+                else
+                    imageToEncode.setMode(0);
+                imageToEncode.M = this.slider.getValue();
+                Golomb.encodeImage(imageToEncode, outputStream);
                 outputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Encoding in " + time + " ms");
