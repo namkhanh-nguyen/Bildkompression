@@ -28,7 +28,7 @@
             </items>
         </ComboBox>
         <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
-        <Label fx:id="decodedInfoLabel" text="M = 0" />
+        <Label fx:id="mInfoLabel" text="M = 1" />
       </children>
      </HBox>
   </top>
@@ -84,10 +84,10 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="mseInfoLabel" text="Load Golomb image to calculate MSE" />
+                  <Label fx:id="mseInfoLabel" text="MSE = -" />
                   <HBox alignment="CENTER_RIGHT" spacing="8.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Preprocessed" />
+                        <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Golomb" />
                         <Button mnemonicParsing="false" onAction="#saveGolombImage" text="Save Golomb Image" />
                         <Label text="Zoom:" />
                         <Slider fx:id="zoomSlider" blockIncrement="0.1" max="20.0" min="1.0" onKeyReleased="#zoomChanged" onMouseClicked="#zoomChanged" onMouseDragged="#zoomChanged" />
@@ -98,7 +98,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="mseInfoLabel" text="M = 0" />
+                  <Label fx:id="decodedInfoLabel" text="Decoded size: -" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                      </children>

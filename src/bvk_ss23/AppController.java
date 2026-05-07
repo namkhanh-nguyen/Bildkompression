@@ -60,6 +60,9 @@ public class AppController
     private Label decodedInfoLabel;
 
     @FXML
+    private Label mInfoLabel;
+
+    @FXML
     private Label messageLabel;
 
     @FXML
@@ -69,7 +72,7 @@ public class AppController
     private Label zoomLabel;
 
     @FXML
-    private ComboBox<?> comboBox;
+    private ComboBox<String> comboBox;
 
     @FXML
     private Slider slider;
@@ -99,6 +102,9 @@ public class AppController
     public void initialize()
     {
         loadAndDisplayImage(new File(initialFileName));
+        this.comboBox.getSelectionModel().select(0);
+        preprocess();
+        golombChanged();
     }
 
     @FXML
@@ -118,21 +124,20 @@ public class AppController
     @FXML
     void golombChanged()
     {
-        Double M = this.slider.getValue();
-        this.decodedInfoLabel.setText(String.format("M = %.0f", M));
+        this.mInfoLabel.setText(String.format("M = %.0f", this.slider.getValue()));
     }
 
     @FXML
     void preprocess()
     {
-        if (this.comboBox.getValue().equals("Copy"))
+        if (getSelectedMode() == 0)
         {
             RasterImage copy = new RasterImage(this.sourceImage.width, this.sourceImage.height);
             System.arraycopy(this.sourceImage.argb, 0, copy.argb, 0, this.sourceImage.argb.length);
             copy.setMode(0);
             this.preprocessedImage = copy;
         }
-        else if (this.comboBox.getValue().equals("DPCM Horizontal"))
+        else
         {
             this.preprocessedImage = RasterImage.encodeDPCM(this.sourceImage);
             this.preprocessedImage.setMode(2);
@@ -148,21 +153,27 @@ public class AppController
         this.sourceImage = new RasterImage(file);
         this.sourceImage = RasterImage.convertToGrayscale(this.sourceImage);
         this.sourceImage.setToView(this.sourceImageView);
-        this.sourceInfoLabel.setText("");
+        this.sourceInfoLabel.setText(String.format("%d x %d", this.sourceImage.width, this.sourceImage.height));
         this.preprocessedImage = new RasterImage(this.sourceImage.width, this.sourceImage.height);
         System.arraycopy(this.sourceImage.argb, 0, this.preprocessedImage.argb, 0, this.sourceImage.argb.length);
         this.preprocessedImage.setMode(0);
+        this.preprocessedImage.setToView(this.preprocessedImageView);
+        this.rasterImage = null;
+        this.decodedImageView.setImage(null);
+        this.preprocessedImageFileSize = 0;
+        this.decodedInfoLabel.setText("Decoded size: -");
         compareImages();
     }
 
     private void compareImages()
     {
-        if (this.sourceImage.argb.length != this.preprocessedImage.argb.length || this.preprocessedImageFileSize == 0)
+        if (this.rasterImage == null || this.sourceImage == null
+                || this.sourceImage.argb.length != this.rasterImage.argb.length)
         {
-            this.mseInfoLabel.setText("");
+            this.mseInfoLabel.setText("MSE = -");
             return;
         }
-        Double mse = Double.valueOf(this.preprocessedImage.getMSEfromComparisonTo(this.sourceImage));
+        double mse = this.rasterImage.getMSEfromComparisonTo(this.sourceImage);
         this.mseInfoLabel.setText(String.format("MSE = %.1f", mse));
     }
 
@@ -181,10 +192,7 @@ public class AppController
                 long startTime = System.currentTimeMillis();
                 RasterImage imageToEncode = new RasterImage(this.sourceImage.width, this.sourceImage.height);
                 System.arraycopy(this.sourceImage.argb, 0, imageToEncode.argb, 0, this.sourceImage.argb.length);
-                if (this.preprocessedImage != null)
-                    imageToEncode.setMode(this.preprocessedImage.getMode());
-                else
-                    imageToEncode.setMode(0);
+                imageToEncode.setMode(getSelectedMode());
                 imageToEncode.M = this.slider.getValue();
                 Golomb.encodeImage(imageToEncode, outputStream);
                 outputStream.close();
@@ -216,6 +224,7 @@ public class AppController
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Decoding in " + time + " ms");
                 this.rasterImage.setToView(this.decodedImageView);
+                this.decodedInfoLabel.setText("Decoded size: " + this.preprocessedImageFileSize/1000 + " kB");
                 compareImages();
             }
             catch (Exception e)
@@ -223,6 +232,14 @@ public class AppController
                 e.printStackTrace();
             }
         }
+    }
+
+    private int getSelectedMode()
+    {
+        String selected = this.comboBox.getValue();
+        if ("DPCM Horizontal".equals(selected))
+            return 2;
+        return 0;
     }
 
     private void zoom(ImageView imageView, ScrollPane scrollPane, double zoomFactor)

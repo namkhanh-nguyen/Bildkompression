@@ -150,18 +150,18 @@ public class RasterImage
     {
         RasterImage newImage = new RasterImage(image.width, image.height);
 
-        for (int y = 0; y < image.height; y++)
+        int prevGray = 128;
+        for (int i = 0; i < image.argb.length; i++)
         {
-            int prevGray = 128;
-            for (int x = 0; x < image.width; x++)
-            {
-                int i = y * image.width + x;
-                int currentGray = image.argb[i] & 0xFF;
-                int diff = (currentGray - prevGray + 128) & 0xFF;
+            int currentGray = image.argb[i] & 0xFF;
+            int diff = currentGray - prevGray + 128;
+            if (diff < 0)
+                diff = 0;
+            if (diff > 255)
+                diff = 255;
 
-                newImage.argb[i] = 0xFF << 24 | diff << 16 | diff << 8 | diff;
-                prevGray = currentGray;
-            }
+            newImage.argb[i] = 0xFF << 24 | diff << 16 | diff << 8 | diff;
+            prevGray = currentGray;
         }
         return newImage;
     }
