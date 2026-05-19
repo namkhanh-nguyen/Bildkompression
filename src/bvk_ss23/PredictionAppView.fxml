@@ -27,7 +27,7 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
+        <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="255.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
         <Label fx:id="mInfoLabel" text="M = 1" />
       </children>
      </HBox>
@@ -109,11 +109,16 @@
       </GridPane>
    </center>
    <bottom>
-      <Label fx:id="messageLabel" minHeight="27.0" text="Message Label" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets top="10.0" />
-         </padding>
-      </Label>
+      <VBox alignment="CENTER" spacing="4.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="optimalMLabel" text="Optimal M = -" />
+            <Label fx:id="messageLabel" minHeight="27.0" text="Message Label">
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </Label>
+         </children>
+      </VBox>
    </bottom>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
