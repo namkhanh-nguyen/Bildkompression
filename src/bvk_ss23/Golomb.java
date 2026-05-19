@@ -17,28 +17,18 @@ public class Golomb
         stream.write(image.height, 16);
 
         int mode = image.getMode();
-        int M = image.M < 1 ? 1 : (int) image.M;
+        double optimalM = calculateOptimalM(image);
+        image.M = optimalM;
+        int M = Math.max(1, (int) Math.round(optimalM));
 
         stream.write(mode, 8);
         stream.write(M, 8);
 
-        int prevPixel = 128;
+        int[] prevPixelRef = new int[] { 128 };
 
         for (int i = 0; i < image.argb.length; i++)
         {
-            int value;
-            if (mode == 2)
-            {
-                int currentPixel = image.argb[i] & 0xFF;
-                int difference = currentPixel - prevPixel;
-                value = difference >= 0 ? 2 * difference : -2 * difference - 1;
-                prevPixel = currentPixel;
-            }
-            else
-            {
-                value = image.argb[i] & 0xFF;
-            }
-
+            int value = processGolombValue(mode, image.argb[i] & 0xFF, prevPixelRef);
             int quotient = value / M;
             int remainder = value % M;
             for (int j = 0; j < quotient; j++)
@@ -125,5 +115,34 @@ public class Golomb
         stream.close();
 
         return image;
+    }
+
+    private static int processGolombValue(int mode, int pixelGray, int[] prevPixelRef)
+    {
+        if (mode == 2)
+        {
+            int difference = pixelGray - prevPixelRef[0];
+            prevPixelRef[0] = pixelGray;
+            return difference >= 0 ? 2 * difference : -2 * difference - 1;
+        }
+        return pixelGray;
+    }
+
+    public static double calculateOptimalM(RasterImage image)
+    {
+        if (image == null || image.argb == null || image.argb.length == 0)
+            return 1.0;
+
+        int mode = image.getMode();
+        long sum = 0;
+        int[] prevPixelRef = new int[] { 128 };
+
+        for (int i = 0; i < image.argb.length; i++)
+        {
+            int value = processGolombValue(mode, image.argb[i] & 0xFF, prevPixelRef);
+            sum += value;
+        }
+
+        return ((double) sum / image.argb.length) * Math.log(2.0);
     }
 }

@@ -66,6 +66,9 @@ public class AppController
     private Label messageLabel;
 
     @FXML
+    private Label optimalMLabel;
+
+    @FXML
     private Slider zoomSlider;
 
     @FXML
@@ -130,6 +133,9 @@ public class AppController
     @FXML
     void preprocess()
     {
+        if (this.sourceImage == null)
+            return;
+
         if (getSelectedMode() == 0)
         {
             RasterImage copy = new RasterImage(this.sourceImage.width, this.sourceImage.height);
@@ -144,6 +150,7 @@ public class AppController
         }
 
         this.preprocessedImage.setToView(this.preprocessedImageView);
+        updateOptimalMControls();
     }
 
     private void loadAndDisplayImage(File file)
@@ -154,10 +161,7 @@ public class AppController
         this.sourceImage = RasterImage.convertToGrayscale(this.sourceImage);
         this.sourceImage.setToView(this.sourceImageView);
         this.sourceInfoLabel.setText(String.format("%d x %d", this.sourceImage.width, this.sourceImage.height));
-        this.preprocessedImage = new RasterImage(this.sourceImage.width, this.sourceImage.height);
-        System.arraycopy(this.sourceImage.argb, 0, this.preprocessedImage.argb, 0, this.sourceImage.argb.length);
-        this.preprocessedImage.setMode(0);
-        this.preprocessedImage.setToView(this.preprocessedImageView);
+        preprocess();
         this.rasterImage = null;
         this.decodedImageView.setImage(null);
         this.preprocessedImageFileSize = 0;
@@ -193,8 +197,8 @@ public class AppController
                 RasterImage imageToEncode = new RasterImage(this.sourceImage.width, this.sourceImage.height);
                 System.arraycopy(this.sourceImage.argb, 0, imageToEncode.argb, 0, this.sourceImage.argb.length);
                 imageToEncode.setMode(getSelectedMode());
-                imageToEncode.M = this.slider.getValue();
                 Golomb.encodeImage(imageToEncode, outputStream);
+                this.optimalMLabel.setText(String.format("Optimal M = %.2f", imageToEncode.M));
                 outputStream.close();
                 long time = System.currentTimeMillis() - startTime;
                 this.messageLabel.setText("Encoding in " + time + " ms");
@@ -240,6 +244,29 @@ public class AppController
         if ("DPCM Horizontal".equals(selected))
             return 2;
         return 0;
+    }
+
+    private void updateOptimalMControls()
+    {
+        if (this.sourceImage == null)
+        {
+            this.optimalMLabel.setText("Optimal M = -");
+            return;
+        }
+
+        RasterImage imageForM = new RasterImage(this.sourceImage.width, this.sourceImage.height);
+        System.arraycopy(this.sourceImage.argb, 0, imageForM.argb, 0, this.sourceImage.argb.length);
+        imageForM.setMode(getSelectedMode());
+        double optimalM = Golomb.calculateOptimalM(imageForM);
+        int roundedOptimalM = (int) Math.round(optimalM);
+        if (roundedOptimalM < this.slider.getMin())
+            roundedOptimalM = (int) this.slider.getMin();
+        if (roundedOptimalM > this.slider.getMax())
+            roundedOptimalM = (int) this.slider.getMax();
+
+        this.slider.setValue(roundedOptimalM);
+        golombChanged();
+        this.optimalMLabel.setText(String.format("Optimal M = %.2f", optimalM));
     }
 
     private void zoom(ImageView imageView, ScrollPane scrollPane, double zoomFactor)
