@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="640.0" maxWidth="1400.0" prefHeight="620.0" prefWidth="1340.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="arithmetic_coding.ArithmeticEncodingController">
+    <top>
+        <HBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button mnemonicParsing="false" onAction="#openSourceImage" text="Open Source" />
+                <Label fx:id="tValueLabel" text="T = 180" />
+                <Slider fx:id="tSlider" blockIncrement="1.0" majorTickUnit="32.0" max="255.0" onKeyReleased="#tSliderChanged" onMouseClicked="#tSliderChanged" onMouseDragged="#tSliderChanged" prefWidth="210.0" value="180.0" />
+                <Button mnemonicParsing="false" onAction="#saveArithmeticImage" text="Save Compressed" />
+                <Button mnemonicParsing="false" onAction="#openArithmeticImage" text="Open Compressed" />
+            </children>
+            <padding>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            </padding>
+        </HBox>
+    </top>
+    <center>
+        <GridPane hgap="6.0" vgap="6.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.34" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="ALWAYS" />
+                <RowConstraints minHeight="90.0" vgrow="NEVER" />
+            </rowConstraints>
+            <children>
+                <TitledPane collapsible="false" text="Source Image">
+                    <content>
+                        <ScrollPane fx:id="sourceScrollPane" fitToHeight="true" fitToWidth="true" pannable="true">
+                            <content>
+                                <ImageView fx:id="sourceImageView" pickOnBounds="true" preserveRatio="true" smooth="false" />
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+                <TitledPane collapsible="false" text="Preprocessed Image" GridPane.columnIndex="1">
+                    <content>
+                        <ScrollPane fx:id="preprocessedScrollPane" fitToHeight="true" fitToWidth="true" pannable="true">
+                            <content>
+                                <ImageView fx:id="preprocessedImageView" pickOnBounds="true" preserveRatio="true" smooth="false" />
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+                <TitledPane collapsible="false" text="Decoded Image" GridPane.columnIndex="2">
+                    <content>
+                        <ScrollPane fx:id="decodedScrollPane" fitToHeight="true" fitToWidth="true" pannable="true">
+                            <content>
+                                <ImageView fx:id="decodedImageView" pickOnBounds="true" preserveRatio="true" smooth="false" />
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+
+                <VBox spacing="2.0" GridPane.rowIndex="1">
+                    <children>
+                        <Label fx:id="sourceEntropyLabel" text="Entropy = -" />
+                        <Label text="Raw data size:" />
+                        <Label fx:id="sourceRawSizeLabel" style="-fx-font-size: 32px; -fx-font-weight: bold;" text="-" />
+                    </children>
+                </VBox>
+                <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                        <Label fx:id="preprocessedEntropyLabel" text="Entropy = -" />
+                        <Label text="Encoded size / size from entropy:" />
+                        <Label fx:id="preprocessedEncodedSizeLabel" style="-fx-font-size: 32px; -fx-font-weight: bold;" text="- / -" />
+                    </children>
+                </VBox>
+                <VBox spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <children>
+                        <Label fx:id="decodedEntropyLabel" text="Entropy = - / MSE = - / PSNR = - dB" />
+                        <Label text="Compressed file size:" />
+                        <Label fx:id="decodedCompressedSizeLabel" style="-fx-font-size: 32px; -fx-font-weight: bold;" text="-" />
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+    </center>
+    <bottom>
+        <GridPane hgap="6.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33.34" />
+                <ColumnConstraints percentWidth="33.33" />
+                <ColumnConstraints percentWidth="33.33" />
+            </columnConstraints>
+            <children>
+                <Label fx:id="decodingTimeLabel" minHeight="28.0" text="Decoding time - ms">
+                    <padding>
+                        <Insets left="4.0" top="6.0" />
+                    </padding>
+                </Label>
+                <Label fx:id="encodingTimeLabel" minHeight="28.0" text="Encoding time - ms" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets left="4.0" top="6.0" />
+                    </padding>
+                </Label>
+            </children>
+        </GridPane>
+    </bottom>
+    <padding>
+        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+    </padding>
+</BorderPane>
+
+

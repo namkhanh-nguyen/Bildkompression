@@ -1,4 +1,4 @@
-package bvk_ss23;
+package golomb_coding;
 
 import java.io.IOException;
 import java.io.InputStream;

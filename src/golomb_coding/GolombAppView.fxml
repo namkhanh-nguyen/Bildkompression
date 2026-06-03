@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.*?>
 
-<BorderPane maxHeight="580.0" maxWidth="835.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bvk_ss23.AppController">
+<BorderPane maxHeight="580.0" maxWidth="835.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="golomb_coding.AppController">
   <top>
     <HBox alignment="CENTER" spacing="30.0">
       <children>
@@ -27,8 +27,8 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="255.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
-        <Label fx:id="mInfoLabel" text="M = 1" />
+        <Slider fx:id="slider" maxWidth="1000" blockIncrement="1.0" max="130.0" min="1.0" onKeyReleased="#golombChanged" onMouseClicked="#golombChanged" onMouseDragged="#golombChanged" />
+        <Label fx:id="decodedInfoLabel" text="M = 0" />
       </children>
      </HBox>
   </top>
@@ -84,10 +84,10 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="mseInfoLabel" text="MSE = -" />
+                  <Label fx:id="mseInfoLabel" text="Load Golomb image to calculate MSE" />
                   <HBox alignment="CENTER_RIGHT" spacing="8.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Golomb" />
+                        <Button mnemonicParsing="false" onAction="#openGolombImage" prefHeight="27.0" text="Open Preprocessed" />
                         <Button mnemonicParsing="false" onAction="#saveGolombImage" text="Save Golomb Image" />
                         <Label text="Zoom:" />
                         <Slider fx:id="zoomSlider" blockIncrement="0.1" max="20.0" min="1.0" onKeyReleased="#zoomChanged" onMouseClicked="#zoomChanged" onMouseDragged="#zoomChanged" />
@@ -98,7 +98,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="decodedInfoLabel" text="Decoded size: -" />
+                  <Label fx:id="mseInfoLabel" text="M = 0" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                      </children>
@@ -109,16 +109,11 @@
       </GridPane>
    </center>
    <bottom>
-      <VBox alignment="CENTER" spacing="4.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="optimalMLabel" text="Optimal M = -" />
-            <Label fx:id="messageLabel" minHeight="27.0" text="Message Label">
-               <padding>
-                  <Insets top="5.0" />
-               </padding>
-            </Label>
-         </children>
-      </VBox>
+      <Label fx:id="messageLabel" minHeight="27.0" text="Message Label" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </Label>
    </bottom>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

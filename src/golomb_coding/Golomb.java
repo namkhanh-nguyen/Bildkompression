@@ -1,5 +1,5 @@
 
-package bvk_ss23;
+package golomb_coding;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

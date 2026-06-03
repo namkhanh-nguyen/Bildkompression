@@ -4,7 +4,7 @@
 // All rights reserved.
 // Date: 2023-03-27
 
-package bvk_ss23;
+package golomb_coding;
 
 import java.io.File;
 import java.util.Arrays;
@@ -165,4 +165,6 @@ public class RasterImage
         }
         return newImage;
     }
+
+
 }
